@@ -9,12 +9,13 @@
 //
 // ===----------------------------------------------------------------------===//
 
-import Testing
 import Memory_Sequence_Primitives
+import Span_Protocol_Primitives
+import Testing
 
-// A minimal owned contiguous fixture: conforms `Memory.Contiguous.Protocol`
-// (owning a heap buffer it deallocates) and opts into `Sequenceable`, so the
-// bridge witness supplies `makeIterator()` vending a `Memory.Cursor`.
+// A minimal owned contiguous fixture: conforms `Span.\`Protocol\`` (owning a
+// heap buffer it deallocates) and opts into `Sequenceable`, so the bridge
+// witness supplies `makeIterator()` vending a `Memory.Cursor`.
 private struct FixtureRegion: ~Copyable {
     let pointer: UnsafePointer<Int>
     let count: Int
@@ -31,11 +32,11 @@ private struct FixtureRegion: ~Copyable {
     }
 }
 
-extension FixtureRegion: Memory.ContiguousProtocol {
-    var span: Span<Int> {
+extension FixtureRegion: Span.`Protocol` {
+    var span: Swift.Span<Int> {
         @_lifetime(borrow self)
         borrowing get {
-            let s = unsafe Span(_unsafeStart: pointer, count: count)
+            let s = unsafe Swift.Span(_unsafeStart: pointer, count: count)
             return unsafe _overrideLifetime(s, borrowing: self)
         }
     }
@@ -49,8 +50,8 @@ extension FixtureRegion: Memory.ContiguousProtocol {
 
 extension FixtureRegion: Sequenceable {}
 
-@Suite("Memory.Contiguous Sequenceable bridge")
-struct MemoryContiguousSequenceableTests {
+@Suite("Span.Protocol Sequenceable bridge")
+struct SpanProtocolSequenceableTests {
     @Test("contiguous conformer derives makeIterator and drains via the consuming pipeline")
     func iteratesContiguous() {
         var collected: [Int] = []

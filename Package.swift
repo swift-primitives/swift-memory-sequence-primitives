@@ -18,15 +18,17 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../swift-memory-primitives"),
-        .package(path: "../swift-memory-cursor-primitives"),
-        .package(path: "../swift-sequence-primitives"),
+        .package(url: "https://github.com/swift-primitives/swift-memory-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-span-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-memory-cursor-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-sequence-primitives.git", branch: "main"),
     ],
     targets: [
         .target(
             name: "Memory Sequence Primitives",
             dependencies: [
-                .product(name: "Memory Contiguous Primitives", package: "swift-memory-primitives"),
+                .product(name: "Memory Primitive", package: "swift-memory-primitives"),
+                .product(name: "Span Protocol Primitives", package: "swift-span-primitives"),
                 .product(name: "Memory Cursor Primitives", package: "swift-memory-cursor-primitives"),
                 .product(name: "Sequence Protocol Primitives", package: "swift-sequence-primitives"),
             ]
