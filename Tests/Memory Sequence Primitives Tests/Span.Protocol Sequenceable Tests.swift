@@ -23,7 +23,7 @@ private struct FixtureRegion: ~Copyable {
     init(_ values: [Int]) {
         let p = UnsafeMutablePointer<Int>.allocate(capacity: values.count)
         for (i, v) in values.enumerated() { unsafe (p + i).initialize(to: v) }
-        self.pointer = unsafe UnsafePointer(p)
+        unsafe (self.pointer = UnsafePointer(p))
         self.count = values.count
     }
 
@@ -50,10 +50,19 @@ extension FixtureRegion: Span.`Protocol` {
 
 extension FixtureRegion: Sequenceable {}
 
-@Suite("Span.Protocol Sequenceable bridge")
-struct SpanProtocolSequenceableTests {
-    @Test("contiguous conformer derives makeIterator and drains via the consuming pipeline")
-    func iteratesContiguous() {
+// `Span.\`Protocol\`` extensions can't be nested-suite hosts directly (the bridge
+// under test lives on the protocol, not a single concrete type), so this uses the
+// top-level backticked-name fallback documented for that case.
+@Suite
+struct `Span.Protocol Sequenceable Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
+}
+
+extension `Span.Protocol Sequenceable Tests`.Unit {
+    @Test
+    func `iterates contiguous`() {
         var collected: [Int] = []
         var iterator = FixtureRegion([10, 20, 30, 40]).makeIterator()
         while let element = iterator.next() {
@@ -62,9 +71,11 @@ struct SpanProtocolSequenceableTests {
 
         #expect(collected == [10, 20, 30, 40])
     }
+}
 
-    @Test("empty contiguous conformer yields no elements")
-    func iteratesEmpty() {
+extension `Span.Protocol Sequenceable Tests`.`Edge Case` {
+    @Test
+    func `iterates empty`() {
         var collected: [Int] = []
         var iterator = FixtureRegion([]).makeIterator()
         while let element = iterator.next() {
