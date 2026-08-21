@@ -65,7 +65,7 @@ where Self: ~Copyable, Element: Copyable & Escapable {
     /// Consumes this contiguous sequence and vends an element-only `Memory.Snapshot.Cursor` over an owned copy of its elements.
     @inlinable
     public consuming func makeSnapshotIterator() -> Memory.Snapshot.Cursor<Element> {
-        let snapshot = span.withUnsafeBufferPointer { Array($0) }
+        let snapshot = span.withUnsafeBufferPointer { unsafe Array($0) }
         return Memory.Snapshot.Cursor(snapshot)
     }
 }
