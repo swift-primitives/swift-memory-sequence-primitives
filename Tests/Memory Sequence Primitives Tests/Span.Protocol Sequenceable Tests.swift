@@ -1,21 +1,7 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-memory-sequence-primitives open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-memory-sequence-primitives project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Memory_Sequence_Primitives
 import Span_Protocol_Primitives
 import Testing
 
-// A minimal owned contiguous fixture: conforms `Span.\`Protocol\`` (owning a
-// heap buffer it deallocates) and opts into `Sequenceable`, so the bridge
-// witness supplies `makeIterator()` vending a `Memory.Cursor`.
 private struct FixtureRegion: ~Copyable {
     let pointer: UnsafePointer<Int>
     let count: Int
@@ -50,9 +36,6 @@ extension FixtureRegion: Span.`Protocol` {
 
 extension FixtureRegion: Sequenceable {}
 
-// `Span.\`Protocol\`` extensions can't be nested-suite hosts directly (the bridge
-// under test lives on the protocol, not a single concrete type), so this uses the
-// top-level backticked-name fallback documented for that case.
 @Suite
 struct `Span.Protocol Sequenceable Tests` {
     @Suite struct Unit {}
